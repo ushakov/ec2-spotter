@@ -64,7 +64,7 @@ apt-get install -y python-pip python-setuptools
 pip install awscli
 
 cd /root
-git clone --depth=1 https://github.com/slavivanov/ec2-spotter.git
+git clone --depth=1 https://github.com/ushakov/ec2-spotter.git
 echo Got spotter scripts from github.
 
 cd ec2-spotter

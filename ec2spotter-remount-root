@@ -180,6 +180,7 @@ rm $AWS_CREDENTIAL_FILE
 DEVICE=/dev/xvdf1
 NEWMNT=/permaroot
 OLDMNT=old-root
+e2fsck -p $DEVICE || exit 1
 e2label $DEVICE permaroot
 tune2fs $DEVICE -U `uuidgen`
 mkdir $NEWMNT
