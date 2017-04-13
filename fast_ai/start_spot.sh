@@ -1,5 +1,8 @@
+#!/bin/bash
 # The config file was created in ondemand_to_spot.sh
-export config_file=my.conf
+export config_file=${1:-cpu.conf}
+
+echo Using config file ${config_file}
 
 # Set current dir to working dir - http://stackoverflow.com/a/10348989/277871
 cd "$(dirname ${BASH_SOURCE[0]})"
@@ -34,3 +37,10 @@ if [ "$ec2spotter_key_name" = "aws-key-$name" ]
 then
 	echo Then connect to your instance: ssh -i ~/.ssh/aws-key-$name.pem ubuntu@$ip
 fi
+
+echo Waiting for the rebooted machine to become available...
+until $(curl --output /dev/null --silent --head --fail http://$ip); do
+    printf '.'
+    sleep 15
+done
+ssh -i ~/.ssh/aws-key-$name.pem ubuntu@$ip

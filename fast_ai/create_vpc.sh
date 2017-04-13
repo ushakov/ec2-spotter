@@ -1,3 +1,4 @@
+#!/bin/bash
 # settings
 export name="fast-ai"
 export cidr="0.0.0.0/0"

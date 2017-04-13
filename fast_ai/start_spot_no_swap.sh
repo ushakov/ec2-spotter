@@ -1,3 +1,4 @@
+#!/bin/bash
 # Parameters defaults
 # The size of the root volume, in GB.
 volume_size=128

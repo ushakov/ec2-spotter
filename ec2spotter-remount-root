@@ -32,7 +32,7 @@ shift # past argument or value
 done
 
 if [ manual_invoke = 1 ]
-then 
+then
   # this is here just to cover accidental invocation from the command-line. it should "never happen"
   echo "This script is destructive when invoked at the wrong time. If you are seeing this message you are doing something wrong."
   exit -1
@@ -42,9 +42,9 @@ if [ "x$ROOT_VOL_NAME" = "x" ]; then echo "missing volume name"; exit -1; fi
 
 
 if [ "x$ROOT_REGION" = "x" ]
-then 
-	echo "missing volume region"; 
-	exit -1; 
+then
+	echo "missing volume region";
+	exit -1;
 fi
 
 # Get Instance ID and current zone from AWS
@@ -97,30 +97,30 @@ if [[ $ROOT_ZONE != $SPOT_ZONE ]]; then
     echo "Snapshot $SNAPSHOT created successfully"
     echo "------------------------------------------------"
     echo ""
-    
+
     if [[ $SPOT_REGION != $ROOT_REGION ]]; then
 	    # NEW_SNAPSHOT=$(${APIBIN}/ec2-copy-snapshot -r ${ROOT_REGION} -s ${SNAPSHOT} | awk '{print $2}')
 		aws ec2 copy-snapshot \
 			--source-region ${ROOT_REGION} --region ${SPOT_REGION} \
 			--source-snapshot-id ${SNAPSHOT} --destination-region ${SPOT_REGION} > new_snapshot.tmp || exit -1
 		NEW_SNAPSHOT=$(jq -r '.SnapshotId' new_snapshot.tmp)
-	    echo "Copying snapshot from $ROOT_REGION to $SPOT_REGION with name $NEW_SNAPSHOT. Waiting for completion"		
-			
-	    # Keep checking to see that snapshot has been copied		
-	    count=0		
-	    while /bin/true		
-	    do		
-			sleep 5		
-			eval count=$((count+5))		
-			echo "... $count seconds gone. Still waiting..."		
+	    echo "Copying snapshot from $ROOT_REGION to $SPOT_REGION with name $NEW_SNAPSHOT. Waiting for completion"
+
+	    # Keep checking to see that snapshot has been copied
+	    count=0
+	    while /bin/true
+	    do
+			sleep 5
+			eval count=$((count+5))
+			echo "... $count seconds gone. Still waiting..."
 			# STATUS=$(${APIBIN}/ec2-describe-snapshots ${NEW_SNAPSHOT} | grep completed)
 			STATUS=$(aws ec2 describe-snapshots --snapshot-ids ${NEW_SNAPSHOT} --region ${SPOT_REGION} | grep completed)
-			
-	       [[ ! -z $STATUS ]] && break		
-	    done		
-			
-	    echo "Snapshot $NEW_SNAPSHOT created successfully"		
-	    echo "------------------------------------------------"		
+
+	       [[ ! -z $STATUS ]] && break
+	    done
+
+	    echo "Snapshot $NEW_SNAPSHOT created successfully"
+	    echo "------------------------------------------------"
 	    echo ""
     else
 	    NEW_SNAPSHOT=$SNAPSHOT
@@ -131,7 +131,7 @@ if [[ $ROOT_ZONE != $SPOT_ZONE ]]; then
 	aws ec2 create-volume --snapshot-id ${NEW_SNAPSHOT} --availability-zone ${SPOT_ZONE} --volume-type $ROOT_TYPE --region ${SPOT_REGION} > new_volume.tmp || exit -1
 	NEW_VOLUME=$(jq -r '.VolumeId' new_volume.tmp)
     echo "Creating volume $NEW_VOLUME from $NEW_SNAPSHOT. Waiting for completion"
-    
+
     # Keep checking to see that volume has been created
     count=0
     while /bin/true
@@ -143,7 +143,7 @@ if [[ $ROOT_ZONE != $SPOT_ZONE ]]; then
 		STATUS=$(aws ec2 describe-volumes --volume-ids ${NEW_VOLUME} --region ${SPOT_REGION} | grep available)
         [[ ! -z $STATUS ]] && break
     done
-    
+
     echo "Volume $NEW_VOLUME created successfully"
     echo "------------------------------------------------"
 
@@ -185,7 +185,7 @@ tune2fs $DEVICE -U `uuidgen`
 mkdir $NEWMNT
 
 #
-# point of no return... 
+# point of no return...
 # modify /sbin/init on the ephemeral volume to chain-load from the persistent EBS volume, and then reboot.
 #
 mv /sbin/init /sbin/init.backup

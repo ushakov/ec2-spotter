@@ -1,4 +1,6 @@
+#!/bin/bash
 # settings
+set -e -x
 export name="fast-ai"
 export keyName="aws-key-$name"
 export maxPricePerHour=0.5
